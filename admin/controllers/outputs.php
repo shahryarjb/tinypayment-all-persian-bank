@@ -29,21 +29,18 @@ class TinyPaymentControllerOutputs extends JControllerForm {
 	}
 	
 	public function csv2() {
-		// Check for request forgeries.
 		JSession::checkToken() or die( 'Invalid Token' );
 		$id = 1;
 		$model = $this->getModel('outputs');
 		$jinput = JFactory::getApplication()->input;
 		$post = $jinput->get('jform', '', 'string');
 		$out =  $model->getPaymentInfo($post,'csv'); 
-		//-----------------------
 		$start = jdate("o_m_j",$out[1]['start'],"","","en");
 		$end = jdate("o_m_j",$out[1]['end'],"","","en");
-		//-----------------------
 		$app = JFactory::getApplication();
 
 		if ($out[0] != false){
-			$out1 = array_chunk($out[0][0],12); // tabdile be chand arraye
+			$out1 = array_chunk($out[0][0],12); 
 	
 			$title = array(array('نام_پرداخت_کننده','آی_پی_پرداخت_کننده','شماره_همراه','ایمیل_پرداخت_کننده','عنوان_پرداخت','توضیحات','تاریخ_پرداخت','شماره_کارت','درگاه_پرداخت','مبلغ','وضعیت_پرداخت','شناسه_پرداخت'));
 			$data  = array_merge($title,$out1);
@@ -58,13 +55,11 @@ class TinyPaymentControllerOutputs extends JControllerForm {
 				-> setHeader('Expires', '0', true)
 				-> setHeader('Pragma','no-cache',true);
 
-			// Close the application gracefully.
 			$app->sendHeaders();
 			$app->close();	
-			
 			$date['start'] = $model->convert_date_to_unix($post['jform']['start']);
 			$date['end'] = $model->convert_date_to_unix($post['jform']['end']);
-			$model->storeLog($date); // insert log 
+			$model->storeLog($date); 
 		}
 		else {
 			$link = JRoute::_('index.php?option=com_tinypayment&view=outputs',false);
@@ -74,7 +69,6 @@ class TinyPaymentControllerOutputs extends JControllerForm {
 	}
 	
 	public function pdf2() {
-		// Check for request forgeries.
 		JSession::checkToken() or die( 'Invalid Token' );
 		$model = $this->getModel('outputs');
 		$jinput = JFactory::getApplication()->input;
@@ -92,7 +86,7 @@ class TinyPaymentControllerOutputs extends JControllerForm {
 		else {
 			$date['start'] = $model->convert_date_to_unix($post['jform']['start']);
 			$date['end'] = $model->convert_date_to_unix($post['jform']['end']);
-			$model->storeLog($date); // insert log 
+			$model->storeLog($date);
 		}
 		
 		$app->close();	

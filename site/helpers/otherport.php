@@ -17,9 +17,9 @@ class other {
 		$app	= JFactory::getApplication();
 		$session = JFactory::getSession();
 		if ($session->isActive('uniqId')) { $session->clear('uniqId'); }
-		$msg= $Model->getTinyMsg(0,'empty'); //get message from DB
-		$Model->updateLogs($uniqId,'empty',$msg); // update transcation logs
-		$Model->updateTransactions($uniqId,'','',''); // update transcation
+		$msg= $Model->getTinyMsg(0,'empty'); 
+		$Model->updateLogs($uniqId,'empty',$msg); 
+		$Model->updateTransactions($uniqId,'','',''); 
 		$link = JRoute::_('index.php?option=com_tinypayment&view=form',false);
 		$app->redirect($link, '<h2>'.$msg.'</h2>', $msgType='Error'); 
 	}	
@@ -29,9 +29,9 @@ class other {
 		$Model = JModelLegacy::getInstance( 'Form', 'TinyPaymentModel' );	
 		$app	= JFactory::getApplication();
 		if ($session->isActive('uniqId')) { $session->clear('uniqId'); }
-		$msg= $Model->getTinyMsg(0,'hck3'); //get message from DB
-		$Model->updateLogs($uniqId,'hck3',$msg); // update transcation logs
-		$Model->updateTransactions($uniqId,'','',''); // update transcation
+		$msg= $Model->getTinyMsg(0,'hck3'); 
+		$Model->updateLogs($uniqId,'hck3',$msg); 
+		$Model->updateTransactions($uniqId,'','',''); 
 		$link = JRoute::_('index.php?option=com_tinypayment&view=form',false);
 		$app->redirect($link, '<h2>'.$msg.'</h2>', $msgType='Error'); 
 	}
@@ -53,10 +53,9 @@ class other {
 		$query->values(implode(',',$values)); 
 		$db->setQuery((string)$query); 
 		$db->execute(); 
-		$msg= $Model->getTinyMsg(0,$msg); //get message from DB
+		$msg= $Model->getTinyMsg(0,$msg); 
 		$link = JRoute::_('index.php?option=com_tinypayment&view=form',false);
 		$app->redirect($link, '<h2>'.$msg.'</h2>', $msgType='Error'); 
-		// inja mishe email kar be admin
 	}
 	
 	static function getRefNum ($refId) {
@@ -77,7 +76,7 @@ class other {
 		if ($app->getParams()->get('backtime') != null )
 			$newTime = ($app->getParams()->get('backtime')) * 60;
 		else 
-			$newTime = 11*60; //jaye in 10 mishe goft meghdar az config gerefte beshe
+			$newTime = 11*60; 
 		
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);

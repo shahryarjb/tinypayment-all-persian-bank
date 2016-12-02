@@ -10,7 +10,7 @@ defined('_JEXEC') or die('Restricted access');
 $model = $this->getModel('form');
 $session = JFactory::getSession();
 if ($session->isActive('uniqId')) { $session->clear('uniqId'); }
-JHtml::_('behavior.formvalidator'); // for client side check javascript
+JHtml::_('behavior.formvalidator'); 
 JHtml::_('behavior.keepalive');
 $app     = JFactory::getApplication();
 ?>

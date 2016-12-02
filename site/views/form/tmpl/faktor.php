@@ -10,24 +10,18 @@ defined('_JEXEC') or die('Restricted access');
 if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'otherport.php'; 
 require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'inputcheck.php';
-//--------------------------------------- for token
 if (!JSession::checkToken( 'post' )) {
 	$newData = checkHack::joinStrip('tokenInvalid');
 	other::reqForm($newData,'token');
 }
-//--------------------------------------- for token
-JHtml::_('behavior.formvalidator'); // for client side check
+JHtml::_('behavior.formvalidator'); 
 JHtml::stylesheet(JURI::root().'components/com_tinypayment/ui/dist/css/customadmin.css');
 JHtml::stylesheet(JURI::root().'components/com_tinypayment/ui/dist/css/custom.css');
 JHtml::stylesheet('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
-
-//============================================== recaptcha new
 $file = 'https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=' . JFactory::getLanguage()->getTag();
 JHtml::_('script', $file);
-//============================================== recaptcha new
 $model = $this->getModel('form');
-$app	= JFactory::getApplication();
-//------------------------------------------------------- get data 
+$app	= JFactory::getApplication(); 
 $jinput = JFactory::getApplication()->input;
 $input = $jinput->getArray(array(
 	'jform' => array(
@@ -39,7 +33,6 @@ $input = $jinput->getArray(array(
 		'pay_price' => 'INT'
 		)
 	));
-//-------------------------------- variable
 $name = $input['jform']['payer_name'];
 $mobile = $input['jform']['payer_mobile'];
 $email = $input['jform']['payer_email'];
@@ -51,8 +44,6 @@ $nPort = $model->portName($port);
 $remoteip  = other::getRealIpAddr();
 $payerIp = $remoteip;
 $createTime = time();
-//------------------------------------------------------- get data
-//------------------------------------------------------- check data
 
 if (
 	checkHack::checkString($title) && 
@@ -69,7 +60,7 @@ if (
 <form class="form-validate" action=""  method="post" id="userinfo" name="form">
 
 
-<div class="callout callout-info"> <!-- inja bayad params config bekhore -->
+<div class="callout callout-info">
 کاربر محترم پیش فاکتور هیچ تضمین قانونی ندارد فقط برای اطلاع رسانی نمایش گزاشته می شود
 </div>
 <h3>پیش فاکتور کاربر <? echo htmlspecialchars($name, ENT_COMPAT, 'UTF-8'); ?></h3>

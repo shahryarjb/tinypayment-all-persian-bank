@@ -19,13 +19,11 @@ $user = JFactory::getUser();
 //==================================================== pagination
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));
-//==================================================== pagination
 $model = $this->getModel('storepayments');
-//------------------- statistic
+
 $all_trans = count($model->statistic('all'));
 $success_trans = count($model->statistic('ok'));
 $fail_trans = $all_trans - $success_trans ;
-//-------------------
 ?>
 <form action="index.php?option=com_tinypayment&view=storepayments" method="post" id="adminForm" name="adminForm">
 <div class="container-fluid">

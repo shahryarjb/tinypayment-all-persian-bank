@@ -9,12 +9,10 @@
 defined('_JEXEC') or die('Restricted access');
 $app	= JFactory::getApplication();
 require_once JPATH_SITE .'/components/com_tinypayment/helpers/jdf.php';
-
 if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'otherport.php'; 
 require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'inputcheck.php';
-	
-JHtml::_('behavior.formvalidator'); // for client side check
+JHtml::_('behavior.formvalidator'); 
 JHtml::stylesheet(JURI::root().'components/com_tinypayment/ui/dist/css/customadmin.css');
 JHtml::stylesheet(JURI::root().'components/com_tinypayment/ui/dist/css/custom.css');
 JHtml::stylesheet('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');

@@ -10,25 +10,16 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// Set some global property
 $document = JFactory::getDocument();
 $document->addStyleDeclaration('.icon-helloworld {background-image: url(../media/com_tinypayment/images/tux-16x16.png);}');
 
-// Access check: is this user allowed to access the backend of this component?
 if (!JFactory::getUser()->authorise('core.manage', 'com_tinypayment'))
 {
 	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
-// require helper file
 JLoader::register('TinyPaymentHelper', JPATH_COMPONENT . '/helpers/tinypayment.php');
-
-// Get an instance of the controller prefixed by HelloWorld
 $controller = JControllerLegacy::getInstance('tinypayment');
-
-// Perform the Request task
 $input = JFactory::getApplication()->input;
 $controller->execute($input->getCmd('task'));
-
-// Redirect if set by the controller
 $controller->redirect();

@@ -11,9 +11,6 @@
 		/>
 
 		<field name="admin_description" type="textarea" default="default" label="توضیحات مدیر" description="" class="adminftext" rows="14" cols="5" filter="raw"/>
-
-
-       
 		<field name="order_status" type="list" default="" label="وضعیت سفارش" description="">
 			<option value="0">بررسی نشده</option>
 			<option value="1">کنسل شده</option>
@@ -30,10 +27,7 @@
 			<option value="12">برگشت</option>
 			<option value="13">پست شده</option>
 			<option value="14">باطل شده</option>
-		</field>
-
-    		
-				
+		</field>			
 	</fieldset>
 	
 </form>

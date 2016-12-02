@@ -22,7 +22,6 @@ class TinyPaymentModelStatistics extends JModelAdmin {
 		
 	}
 
-//=====================================================================
 	protected function loadFormData()
 	{
 		$data = JFactory::getApplication()->getUserState(
@@ -36,29 +35,23 @@ class TinyPaymentModelStatistics extends JModelAdmin {
 
 		return $data;
 	}
-//=====================================================================
+
 	protected function canDelete($record) {
 		if( !empty( $record->id ) ) {
 			return JFactory::getUser()->authorise( "core.delete", "com_tinypayment.message." . $record->id );
 		}
 	}
 	
-
-//------------------------------------------
-
 	protected function populateState($ordering = 'id', $direction = 'desc')
 		{
-			// List state information.
 			parent::populateState($ordering, $direction);
 		}
 
-//------------------------------------------
 	protected function getStoreId($id = '')
 		{
 			return parent::getStoreId($id);
 		}
-//------------------------------------------
-//============================================ load id 
+
 	function loadData ($id) {
 		$greoDate =  TinyPaymentHelper::convert_date_to_unix(jalali_to_gregorian(jdate("Y", time(),"","","en"),01,01,'-'));
 		$db = JFactory::getDbo();
@@ -92,7 +85,7 @@ class TinyPaymentModelStatistics extends JModelAdmin {
 		
 		switch($input) {
 			case 'price':
-				foreach($this->loadData($stat) as $d){  // jam kardan mabalegh baraye har mah
+				foreach($this->loadData($stat) as $d){  
 					switch(jdate("m", $d->last_change_date,"","","en")) {
 						case '01':$out1 += $d->price;break;
 						case '02':$out2 += $d->price;break;
@@ -112,7 +105,7 @@ class TinyPaymentModelStatistics extends JModelAdmin {
 			break;
 			
 			case 'count':
-				foreach($this->loadData($stat) as $d){  // jam kardan tedade kole trakonesh ha dar har mah (mofagh va namovagh)
+				foreach($this->loadData($stat) as $d){  
 						switch(jdate("m", $d->last_change_date,"","","en")) {
 							case '01':$out1++;break;
 							case '02':$out2++;break;
@@ -138,8 +131,7 @@ class TinyPaymentModelStatistics extends JModelAdmin {
 			"dey"=>$out10,"bah"=>$out11,"esf"=>$out12
 		);
 		
-		foreach($month as $key => $m){  // gereftan mah haee ke pardakhti dashtan
-			//if($m > 0) 
+		foreach($month as $key => $m){  
 				$value[$key]= $m;
 		}
 		if (isset($value))
@@ -148,7 +140,7 @@ class TinyPaymentModelStatistics extends JModelAdmin {
 			return null;
 	}
 	
-	function covertMonth($mon) {  // tabdil mah englisi be farsi
+	function covertMonth($mon) {  
 		switch($mon){
 			case'far' : $out= '"فروردین"'; break;case'ord' : $out= '"اردیبهشت"'; break;case'kho' : $out= '"خرداد"';break;
 			case'tir' : $out= '"تیر"'; break;case'mor' : $out='"مرداد"'; break;case'sha' : $out='"شهریور"';break;

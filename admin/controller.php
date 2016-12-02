@@ -10,20 +10,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-/**
- * General Controller of TinyPayment component
- *
- * @package     Joomla.Administrator
- * @subpackage  com_TinyPayment
- * @since       0.0.1
- */
 class TinyPaymentController extends JControllerLegacy
 {
-	/**
-	 * The default view for the display method.
-	 *
-	 * @var string
-	 * @since 12.2
-	 */
 	protected $default_view = 'storepayments';
 }

@@ -23,14 +23,9 @@ class TinyPaymentControllerForm extends JControllerForm
  
 	public function submit()
 	{
-
-		// Check for request forgeries.
 		JSession::checkToken( 'post' ) or die( 'Invalid Token' );
- 
-		// Initialise variables.
 		$app	= JFactory::getApplication();
 		$model	= $this->getModel('form');
-		
 		$jinput = JFactory::getApplication()->input;
 		$input = $jinput->getArray(array(
 							'jform' => array(
@@ -44,8 +39,7 @@ class TinyPaymentControllerForm extends JControllerForm
 								'pay_port' => 'INT'
 								)
 						));
-		
-		//========================================================= captcha
+
 		$remoteip  = other::getRealIpAddr();
 		if ($app->getParams()->get('recapstatus') != null && $app->getParams()->get('recapstatus') == 1) {
 			$privatekey = $app->getParams()->get('prerecapcod');
@@ -62,8 +56,7 @@ class TinyPaymentControllerForm extends JControllerForm
 				}
 			}
 		}
-		//========================================================= captcha		
-		//-------------------------------- variable
+
 		$payTitle = $input['jform']['pay_title'];
 		$payDescription = $input['jform']['pay_description'];
 		$payerName = $input['jform']['payer_name'];
@@ -71,11 +64,8 @@ class TinyPaymentControllerForm extends JControllerForm
 		$payerEmail = $input['jform']['payer_email'];
 		$payerIp = $input['jform']['payer_ip'];
 		$port = $input['jform']['pay_port'];
-		//---------------
 		$createTime = time();
-		//---------------
 		$price = $input['jform']['pay_price'];
-		//------------- redirect
 		if (
 			checkHack::checkString($payTitle) && 
 			checkHack::checkAlphaNumberic($payDescription) &&  
@@ -95,7 +85,6 @@ class TinyPaymentControllerForm extends JControllerForm
 			other::reqForm($newData,'hck2');
 		}	
 	}
-	
 	
 	public function callback () {
 		$model	= $this->getModel('form');
