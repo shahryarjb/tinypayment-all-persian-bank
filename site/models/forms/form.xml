@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form name="form" addrulepath="/components/com_tinypayment/models/rules"> 
+		<field 
+		id="payer_name" 
+		name="payer_name" 
+		type="text" 
+		label="نام خود را وارد کنید" 
+		description="" 
+		size="10" 
+		class="required validate-username"
+		/>
+		<field 
+		id="payer_mobile" 
+		name="payer_mobile" 
+		type="text" 
+		label="موبایل خود را وارد کنید" 
+		description="" 
+		size="11" 
+		class="required validate-numeric"
+		/>
+		<field 
+		id="payer_email" 
+		name="payer_email" 
+		type="text" 
+		label="ایمیل خود را وارد کنید" 
+		description="" 
+		size="10" 
+		class="required validate-email"
+		/>
+		<field 
+		id="pay_title" 
+		name="pay_title" 
+		type="text" 
+		label="عنوان پرداخت را وارد کنید" 
+		description="" 
+		size="10" 
+		class="required validate-username"
+		/>
+		<field 
+		id="pay_description" 
+		name="pay_description" 
+		type="textarea" 
+		label="توضیحات پرداخت را وارد کنید" 
+		description="" 
+		size="10" 
+		class="required validate-username"
+		/>
+		
+		<field 
+		id="pay_price" 
+		name="pay_price" 
+		type="text" 
+		label="مبلغ را به عدد وارد کنید (واحد ریال )" 
+		description="" 
+		size="10" 
+		class="required validate-numeric"
+		/>
+</form>

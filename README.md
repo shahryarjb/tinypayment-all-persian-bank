@@ -1,2 +1,1 @@
-# tinypayment-all-persian-bank
-کامپوننت آسان پرداخت جوملا با پوشش تمام درگاه های بانکی عضو شتاب ایران
+# tinypayment

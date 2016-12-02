@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.6" method="upgrade">
+
+	<name>COM_TINYPAYMENT</name>
+	<!-- The following elements are optional and free of formatting constraints -->
+	<creationDate>Dec 2016</creationDate>
+	<author>Trangell</author>
+	<authorEmail>info@trangell.com</authorEmail>
+	<authorUrl>https://trangell.com/</authorUrl>
+	<copyright>تیم برنامه نویسی ترانگل</copyright>
+	<license>GPL-3.0</license>
+	<!--  The version string is recorded in the components table -->
+	<version>1.0.0</version>
+	<!-- The description is optional and defaults to the name -->
+	<description>
+	<![CDATA[<div align="center">
+			<div class="alert alert-success" style="background-color:#edf4ff;border-color:#a0c7ff;color: #0088CC;padding: 10px; font-family:tahoma; font-size:12px; font-weight:normal;">
+			<h4>
+			<a href="https://trangell.com/fa/blog/6-خدمات-افزونه-نویسی" style="font-family:tahoma; font-size:15px; font-weight:normal;">خدمات افزونه نویسی جوملا</a> | 
+			<a href="https://trangell.com/fa/blog/91-آموزش-نصب-درگاه-بانکی-جوملا-با-کامپوننت-آسان-پرداخت" style="font-family:tahoma; font-size:15px; font-weight:normal;">آموزش اتصال جوملا به درگاه بانکی</a> | 
+			<a href="https://telegram.me/trangell" style="font-family:tahoma; font-size:15px; font-weight:normal;">کانال تلگرام ترانگل</a> |
+			<a href="https://trangell.com/fa/home/portfolio" style="font-family:tahoma; font-size:15px; font-weight:normal;">نمونه کار طراحی سایت</a>		<br>
+			</h4>
+			<div>
+			<br/>
+			<br/>
+			<br/>
+			<span style="color:#2C8C42;font-size:20px">
+			کامپوننت آسان پرداخت جامع جوملا
+			</span>
+			<br/>
+			<br/>
+			<code>با پوشش تمام درگاه های عضو شتاب</code>				
+			</br>
+			<br/>
+			<br/>
+			<img style="margin: 0 auto" src="https://trangell.com/images/header-blogo.png">
+			</div>
+			<style>table.adminform{width: 100%;}</style>
+			</div>]]>
+	</description>
+
+	<!-- Runs on install/uninstall/update; New in 2.5 -->
+	<scriptfile>script.php</scriptfile>
+	
+	<install> <!-- Runs on install -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+	<uninstall> <!-- Runs on uninstall -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+	<update> <!-- Runs on update; New since J2.5 -->
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
+		</schemas>
+	</update>
+
+	<!-- Site Main File Copy Section -->
+	<files folder="site">
+		<folder>controllers</folder>
+		<folder>helpers</folder>
+		<folder>models</folder>
+		<folder>tcpdf</folder>
+		<folder>ui</folder>
+		<folder>views</folder>
+		<filename>controller.php</filename>	
+		<filename>index.html</filename>	
+		<filename>tinypayment.php</filename>	
+	</files>
+
+        <languages folder="site/language">
+        </languages>
+
+	<media destination="com_tinypayment" folder="media">
+		<filename>index.html</filename>
+		<folder>images</folder>
+	</media>
+
+	<administration>
+		<!-- Administration Menu Section -->
+		<menu link='index.php?option=com_tinypayment' img="../media/com_tinypayment/images/tux-16x16.png">COM_TINYPAYMENT_MENU</menu>
+		<!-- Administration Main File Copy Section -->
+		<files folder="admin">
+			<folder>controllers</folder>
+			<folder>helpers</folder>
+			<folder>models</folder>
+			<folder>sql</folder>
+			<folder>tables</folder>
+			<folder>views</folder>
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>
+			<filename>index.html</filename>
+			<filename>tinypayment.php</filename>
+		</files>
+		<languages folder="admin/language">
+        		<language tag="en-GB">en-GB/en-GB.com_tinypayment.ini</language>
+                <language tag="en-GB">en-GB/en-GB.com_tinypayment.sys.ini</language>
+		</languages>
+	</administration>
+
+</extension>

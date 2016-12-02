@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form 				
+	addrulepath="/administrator/components/com_tinypayment/models/rules"
+>
+	<fieldset
+	 name="details"
+	 label="نمایش اطلاعات پرداخت کننده" >
+		<field
+			name="id"
+			type="hidden"
+		/>
+
+		<field name="admin_description" type="textarea" default="default" label="توضیحات مدیر" description="" class="adminftext" rows="14" cols="5" filter="raw"/>
+
+
+       
+		<field name="order_status" type="list" default="" label="وضعیت سفارش" description="">
+			<option value="0">بررسی نشده</option>
+			<option value="1">کنسل شده</option>
+			<option value="2">کنسل نشده</option>
+			<option value="3">برگشت مبلغ</option>
+			<option value="4">انجام شده</option>
+			<option value="5">رد کردن</option>
+			<option value="6">منقضی شده</option>
+			<option value="7">ناموفق</option>
+			<option value="8">معلق</option>
+			<option value="9">بررسی شده</option>
+			<option value="10">در حال بررسی</option>
+			<option value="11">پرداخت مجدد</option>
+			<option value="12">برگشت</option>
+			<option value="13">پست شده</option>
+			<option value="14">باطل شده</option>
+		</field>
+
+    		
+				
+	</fieldset>
+	
+</form>

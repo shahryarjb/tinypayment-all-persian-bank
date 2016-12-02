@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addrulepath="/administrator/components/com_tinypayment/models/rules">
+	<fieldset name="details" label="نمایش اطلاعات پرداخت کننده" >
+		<field name="id" type="hidden"/>
+		
+		<field
+			name="start"
+			type="calendar"
+			label="از"
+			description=""
+			size="30"
+			default=""
+			validate=""
+			format="%Y-%m-%d %H:%M:%S"
+		>
+		</field>
+		
+		<field
+			name="end"
+			type="calendar"
+			label="تا"
+			description=""
+			size="30"
+			default=""
+			validate=""
+			format="%Y-%m-%d %H:%M:%S"
+		>
+		</field>
+		
+	</fieldset>	
+</form>
