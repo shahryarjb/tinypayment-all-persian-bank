@@ -10,7 +10,7 @@
 <p dir="rtl" style="text-align: right;">منتظر نظرات و همینطور همکاری شما در این پروژه هستیم . به زودی نسخه دوم این کامپوننت نیز منتشر می گردد. </p>
 <p dir="rtl" style="text-align: right;">لازم به ذکر هست لطفا قبل از نصب بکاپ بگیرید و همینطور مقاله بالا برای آموزش را مطالعه کنید و همینطور موارد زیر را در سایت و هاست خود آماده سازید :</p>
 <p dir="rtl" style="text-align: right;"> </p>
-<p dir="rtl" style="text-align: right;">جوملا 3.6.4</p>
+<p dir="rtl" style="text-align: right;"> جوملا 3.6.4 به بالا</p>
 <p dir="rtl" style="text-align: right;">نسخه php 5.6</p>
 <p dir="rtl" style="text-align: right;"> </p>
 <p dir="rtl" style="text-align: right;">توجه : در صورت پیاده سازی نشده موارد پیش نیاز احتمال مشکل در اسکریپت شما وجود دارد .</p>
