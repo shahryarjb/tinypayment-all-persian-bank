@@ -35,6 +35,8 @@ class TinyPaymentModelOutputs extends JModelAdmin {
 		return $form;
 	}
 
+
+//=====================================================================
 	protected function loadFormData()
 	{
 		$data = JFactory::getApplication()->getUserState(
@@ -48,23 +50,29 @@ class TinyPaymentModelOutputs extends JModelAdmin {
 
 		return $data;
 	}
-
+//=====================================================================
 	protected function canDelete($record) {
 		if( !empty( $record->id ) ) {
 			return JFactory::getUser()->authorise( "core.delete", "com_tinypayment.message." . $record->id );
 		}
 	}
+	
+
+//------------------------------------------
 
 	protected function populateState($ordering = 'id', $direction = 'desc')
 		{
+			// List state information.
 			parent::populateState($ordering, $direction);
 		}
 
+//------------------------------------------
 	protected function getStoreId($id = '')
 		{
 			return parent::getStoreId($id);
 		}
-
+//------------------------------------------
+//============================================ load id 
 	public function getPaymentInfo ($data,$type) {
 		$time_start = $this::convert_date_to_unix($data[0]);
 		$time_end = $this::convert_date_to_unix($data[1]);
@@ -108,12 +116,15 @@ class TinyPaymentModelOutputs extends JModelAdmin {
 	}
 		
 	public function convert_date_to_unix($date_time) {
+		// Get the User and their timezone
 		$user = JFactory::getUser();
 		$timeZone = $user->getParam('timezone', 'UTC');
+		// Create JDate object set to now in the users timezone.
 		$myDate = JDate::getInstance($date_time, $timeZone);
 		return $myDate->toUnix();
 	}
 		
+//=============================================
 	public function csv ($data) {
 		if (count($data) > 0){
 			foreach($data as $paymentInfo){	
@@ -134,7 +145,8 @@ class TinyPaymentModelOutputs extends JModelAdmin {
 		}
 		else {
 			return false;
-		}	
+		}
+		
 	}
 	
 	public function callPdf($data,$date) {
@@ -142,16 +154,19 @@ class TinyPaymentModelOutputs extends JModelAdmin {
 		$end = jdate("o_m_j",$date['end'],"","","en");
 		if (count($data) > 0){
 			$info = $this::csv($data);
-			$out = array_chunk($info[0],12); 
-			$this->pdf($out,$date); 
+			$out = array_chunk($info[0],12); // tabdile be chand arraye
+			$this->pdf($out,$date); //generate pdf
 			$filePath = JPATH_ROOT . '/media/com_tinypayment/images/pdf/invoice-'.intval($start).'-'.intval($end).'.pdf';
-			$this->processDownload($filePath,'invoice-'.$start.'-'.$end.'.pdf',true); 
+			$this->processDownload($filePath,'invoice-'.$start.'-'.$end.'.pdf',true); // generate link
 			return true;
 		}
 		else 
 			return false;
 	}
-
+	/**
+	 * Generate invoice PDF
+	 * @param array $cid
+	 */
 	public static function pdf ($data,$date) {
 		$start = jdate("o_m_j",$date['start'],"","","en");
 		$end = jdate("o_m_j",$date['end'],"","","en");
@@ -160,30 +175,54 @@ class TinyPaymentModelOutputs extends JModelAdmin {
 		require_once JPATH_COMPONENT_SITE . "/tcpdf/tcpdf.php";
 
 		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+		// set document information
 		$pdf->SetCreator(PDF_CREATOR);
 		$pdf->SetAuthor($sitename);
 		$pdf->SetTitle('فاکتور');
 		$pdf->SetSubject('فاکتور');
 		$pdf->SetKeywords('فاکتور');
+
+		// set default header data
 		$pdf->SetHeaderData('tinypayment_invoice_logo.png', 30, JURI::root() , ' ', array(0,64,255), array(0,64,128));
+		//$pdf->setFooterData(array(0,64,0), array(0,64,128));
+
+		// set header and footer fonts
 		$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
 		$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+		// set default monospaced font
 		$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+		// set margins
 		$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+		// set auto page breaks
 		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+		// set image scale factor
 		$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+		// set some language-dependent strings (optional)
 		if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
 		require_once(dirname(__FILE__).'/lang/eng.php');
 		$pdf->setLanguageArray($l);
 		}
 
+		// ---------------------------------------------------------
+
+		// set font
 		$pdf->SetFont('freeserif', '', 9, '', true);
+
+		// add a page
 		$pdf->AddPage();
+
 		$pdf->Write(0, 'فاکتور پرداخت', '', 0, 'L', true, 0, false, false, 0);
 		$pdf->Ln();
 
+		//-----------------------------------------------------------
 		$out = '<table style="border-color: #000000;" border="1"> <tbody> ';
 		$out .= '<tr>
 					<td>نام</td>
@@ -218,9 +257,14 @@ class TinyPaymentModelOutputs extends JModelAdmin {
 		$out .='</tbody> </table>';
 		$out .= '<p style="text-align: right;"> </p>
 <p dir="rtl" style="text-align: right;">کامپوننت آسان پرداخت <a href="https://trangell.com/fa/">ترانگل</a></p>';
-
+		//---------------------------------------------------------
 		$pdf->writeHTML($out, true, false, false, false, '');
+		//-----------------------------------------------------------
+		
+		// ---------------------------------------------------------
 		$id = 1; 
+		// Close and output PDF document
+		// This method has several options, check the source code documentation for more information.
 		$filePath = JPATH_ROOT . '/media/com_tinypayment/images/pdf/invoice-'.intval($start).'-'.intval($end).'.pdf';
 		$pdf->Output($filePath, 'F');
 		
@@ -238,6 +282,7 @@ class TinyPaymentModelOutputs extends JModelAdmin {
 		}		
 		$ext = JFile::getExt($filename) ;
 		$mime = 'application/pdf';
+		// required for IE, otherwise Content-disposition is ignored
 		if(ini_get('zlib.output_compression'))  {
 			ini_set('zlib.output_compression', 'Off');
 		}
@@ -249,19 +294,27 @@ class TinyPaymentModelOutputs extends JModelAdmin {
 			. ' filename="' . JFile::getName($filename) . '";' 
 			. ' modification-date="' . $mod_date . '";'
 			. ' size=' . $fsize .';'
-			); 
-	    header("Content-Type: "    . $mime );		
+			); //RFC2183
+	    header("Content-Type: "    . $mime );			// MIME type
 	    header("Content-Length: "  . $fsize);
 	
-	    if( ! ini_get('safe_mode') ) { 
+	    if( ! ini_get('safe_mode') ) { // set_time_limit doesn't work in safe mode
 		    @set_time_limit(0);
 	    }
 	    self::readfile_chunked($filePath);
 	}
-
+	
+	/**
+	 * 
+	 * Function to read file
+	 * @param string $filename
+	 * @param boolean $retbytes
+	 * @return boolean|number
+	 */
 	public static function readfile_chunked($filename, $retbytes = true)
 	{
-		$chunksize = 1 * (1024); 
+		//$chunksize = 1 * (1024 * 1024); // how many bytes per chunk
+		$chunksize = 1 * (1024); // how many bytes per chunk
 		$buffer = '';
 		$cnt = 0;
 		$handle = fopen($filename, 'rb');
@@ -283,7 +336,7 @@ class TinyPaymentModelOutputs extends JModelAdmin {
 		$status = fclose($handle);
 		if ($retbytes && $status)
 		{
-			return $cnt; 
+			return $cnt; // return num. bytes delivered like readfile() does.
 		}
 		return $status;
 	}

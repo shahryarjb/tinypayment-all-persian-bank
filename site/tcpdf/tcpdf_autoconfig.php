@@ -39,6 +39,7 @@
  * @package com.tecnick.tcpdf
  * @version 1.1.1
  */
+defined('_JEXEC') or die;
 
 // DOCUMENT_ROOT fix for IIS Webserver
 if ((!isset($_SERVER['DOCUMENT_ROOT'])) OR (empty($_SERVER['DOCUMENT_ROOT']))) {

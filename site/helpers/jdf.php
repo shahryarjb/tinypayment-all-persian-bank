@@ -12,6 +12,8 @@ Copyright(C)2015, Reza Gholampanahi , http://jdf.scr.ir
  * @copyright   Copyright (C) 20016 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
+defined('_JEXEC') or die;
+
 function jdate($format,$timestamp='',$none='',$time_zone='Asia/Tehran',$tr_num='fa'){
 
  $T_sec=0;/* <= رفع خطاي زمان سرور ، با اعداد '+' و '-' بر حسب ثانيه */

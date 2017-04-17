@@ -39,6 +39,7 @@
  * @author Nicola Asuni
  * @version 1.0.15
  */
+defined('_JEXEC') or die;
 
 // include class for decoding filters
 require_once(dirname(__FILE__).'/include/tcpdf_filters.php');

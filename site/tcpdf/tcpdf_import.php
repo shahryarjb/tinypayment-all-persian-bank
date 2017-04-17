@@ -41,6 +41,7 @@
  * @author Nicola Asuni
  * @version 1.0.001
  */
+defined('_JEXEC') or die;
 
 // include the TCPDF class
 require_once(dirname(__FILE__).'/tcpdf.php');

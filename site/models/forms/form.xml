@@ -7,7 +7,7 @@
 		label="نام خود را وارد کنید" 
 		description="" 
 		size="10" 
-		class="required validate-username"
+		class="required validate-username form-control"
 		/>
 		<field 
 		id="payer_mobile" 
@@ -16,7 +16,7 @@
 		label="موبایل خود را وارد کنید" 
 		description="" 
 		size="11" 
-		class="required validate-numeric"
+		class="required validate-numeric form-control"
 		/>
 		<field 
 		id="payer_email" 
@@ -25,7 +25,7 @@
 		label="ایمیل خود را وارد کنید" 
 		description="" 
 		size="10" 
-		class="required validate-email"
+		class="required validate-email form-control"
 		/>
 		<field 
 		id="pay_title" 
@@ -34,7 +34,7 @@
 		label="عنوان پرداخت را وارد کنید" 
 		description="" 
 		size="10" 
-		class="required validate-username"
+		class="required validate-username form-control"
 		/>
 		<field 
 		id="pay_description" 
@@ -43,7 +43,7 @@
 		label="توضیحات پرداخت را وارد کنید" 
 		description="" 
 		size="10" 
-		class="required validate-username"
+		class="required validate-username form-control"
 		/>
 		
 		<field 
@@ -53,6 +53,6 @@
 		label="مبلغ را به عدد وارد کنید (واحد ریال )" 
 		description="" 
 		size="10" 
-		class="required validate-numeric"
+		class="required validate-numeric form-control"
 		/>
 </form>

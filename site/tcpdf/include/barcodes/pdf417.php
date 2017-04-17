@@ -52,7 +52,7 @@
  * @author Nicola Asuni
  * @version 1.0.005
  */
-
+defined('_JEXEC') or die;
 // definitions
 if (!defined('PDF417DEFS')) {
 

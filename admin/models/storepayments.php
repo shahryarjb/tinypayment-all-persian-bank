@@ -8,8 +8,10 @@
  */
 defined('_JEXEC') or die('Restricted access');
 
+
 class TinyPaymentModelstorepayments extends JModelList
 {
+
 	public function __construct($config = array())
 	{
 		if (empty($config['filter_fields']))
@@ -33,16 +35,21 @@ class TinyPaymentModelstorepayments extends JModelList
 
 		parent::__construct($config);
 	}
+//------------------------------------------
 
 protected function populateState($ordering = 'p.id', $direction = 'desc')
 	{
+		// List state information.
 		parent::populateState($ordering, $direction);
 	}
 
+//------------------------------------------
 protected function getStoreId($id = '')
 	{
 		return parent::getStoreId($id);
 	}
+
+//------------------------------------------
 
 	protected function getListQuery()
 	{
@@ -114,9 +121,13 @@ protected function getStoreId($id = '')
 	}
 	
 	public function convert_date_to_unix($date_time) {
+    		// Get the User and their timezone
 		    	$user = JFactory::getUser();
 		    	$timeZone = $user->getParam('timezone', 'UTC');
+
+	    	// Create JDate object set to now in the users timezone.
 	    	    $myDate = JDate::getInstance($date_time, $timeZone);
+
 	    		return $myDate->toUnix();
 	}
 	
@@ -138,5 +149,16 @@ protected function getStoreId($id = '')
 		return $row;
 	}
 	
-	
+	public function getPayments() {
+		$db = JFactory::getDbo();
+		$user = JFactory::getUser();
+		$query = $db->getQuery(true);
+		$query->select('tp.id,tp.pay_title,tp.pay_description,tp.payer_name,tp.payer_mobile,tp.payer_email,tp.order_status,tp.admin_description,tp.create_time,tt.port_id,tt.price,tt.tracking_code,tt.last_change_date,tsl.result_message');
+		$query->from($db->qn('#__tinypayment_paymentinfo') . ' as tp');
+		$query->leftJoin($db->qn('#__tinypayment_transactions') . ' as tt ON tt.payment_id = tp.id');
+		$query->leftJoin($db->qn('#__tinypayment_status_log') . ' as tsl ON tsl.transaction_id = tt.id');	
+		$db->setQuery((string)$query); 
+		$result = $db->loadObjectlist();
+		return $result;	
+	}
 }

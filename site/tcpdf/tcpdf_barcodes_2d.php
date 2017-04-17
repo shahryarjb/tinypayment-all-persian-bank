@@ -47,6 +47,8 @@
  * @version 1.0.015
  * @author Nicola Asuni
  */
+defined('_JEXEC') or die;
+ 
 class TCPDF2DBarcode {
 
 	/**

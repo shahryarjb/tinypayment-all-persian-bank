@@ -1,14 +1,13 @@
 
 la,ul,div,a,h1,h2,h3,h4,h5,p,b {
     font-family: tahoma !important;
-
 }
 
 p {
     text-align: justify;
 }
-a,label {
-    font-weight: normal;
+a,label,th {
+    font-weight: normal !important;
 }
 .main-header .logo {
     float: right !important;
@@ -423,4 +422,37 @@ span.btn.btn-success.fileinput-button {
 }
 .uk-alert.uk-alert-large.uk-alert-danger h2 {
 	text-align: justify;
+}
+.clearfix {
+    clear: both;
+}
+.box.box-success {
+    width: 100%;
+}
+.bgalerts {
+    padding: 15px;
+    margin-bottom: 17px;
+    border: 1px solid transparent;
+    border-radius: 4px; 
+}
+p.bg-success {
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #3c763d;
+
+}
+p.bg-info {
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    color: #31708f;
+}
+p.bg-danger {
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    color: #a94442;
+}
+p.bg-warning {
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+    color: #8a6d3b;
 }

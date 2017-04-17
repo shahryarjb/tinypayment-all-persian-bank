@@ -2,16 +2,13 @@
 <extension type="component" version="3.6" method="upgrade">
 
 	<name>COM_TINYPAYMENT</name>
-	<!-- The following elements are optional and free of formatting constraints -->
-	<creationDate>Dec 2016</creationDate>
 	<author>Trangell</author>
+	<creationDate>2017-03-0</creationDate>
+	<copyright>Copyright (C) 2017 Open Source Matters, Inc. All rights reserved.</copyright>
 	<authorEmail>info@trangell.com</authorEmail>
 	<authorUrl>https://trangell.com/</authorUrl>
-	<copyright>تیم برنامه نویسی ترانگل</copyright>
+	<version>3.0.0</version>
 	<license>GPL-3.0</license>
-	<!--  The version string is recorded in the components table -->
-	<version>1.0.0</version>
-	<!-- The description is optional and defaults to the name -->
 	<description>
 	<![CDATA[<div align="center">
 			<div class="alert alert-success" style="background-color:#edf4ff;border-color:#a0c7ff;color: #0088CC;padding: 10px; font-family:tahoma; font-size:12px; font-weight:normal;">
@@ -39,27 +36,28 @@
 			<style>table.adminform{width: 100%;}</style>
 			</div>]]>
 	</description>
-
-	<!-- Runs on install/uninstall/update; New in 2.5 -->
 	<scriptfile>script.php</scriptfile>
 	
-	<install> <!-- Runs on install -->
+	<install>
 		<sql>
 			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
 		</sql>
 	</install>
-	<uninstall> <!-- Runs on uninstall -->
+	<uninstall>
 		<sql>
 			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
 		</sql>
 	</uninstall>
-	<update> <!-- Runs on update; New since J2.5 -->
+	<update>
 		<schemas>
 			<schemapath type="mysql">sql/updates/mysql</schemapath>
 		</schemas>
 	</update>
 
-	<!-- Site Main File Copy Section -->
+	<updateservers>
+        <server type="extension" priority="1" name="COM_TINYPAYMENT">https://trangell.com/ext/updates/component/com_tinypayment.xml</server>
+    </updateservers>
+
 	<files folder="site">
 		<folder>controllers</folder>
 		<folder>helpers</folder>
@@ -69,10 +67,13 @@
 		<folder>views</folder>
 		<filename>controller.php</filename>	
 		<filename>index.html</filename>	
+		<filename>router.php</filename>	
 		<filename>tinypayment.php</filename>	
 	</files>
 
-        <languages folder="site/language">
+        <languages folder="language/site">
+			<language tag="en-GB">en-GB/en-GB.com_tinypayment.ini</language>
+			<language tag="fa-IR">fa-IR/fa-IR.com_tinypayment.ini</language>
         </languages>
 
 	<media destination="com_tinypayment" folder="media">
@@ -81,9 +82,7 @@
 	</media>
 
 	<administration>
-		<!-- Administration Menu Section -->
 		<menu link='index.php?option=com_tinypayment' img="../media/com_tinypayment/images/tux-16x16.png">COM_TINYPAYMENT_MENU</menu>
-		<!-- Administration Main File Copy Section -->
 		<files folder="admin">
 			<folder>controllers</folder>
 			<folder>helpers</folder>
@@ -97,9 +96,11 @@
 			<filename>index.html</filename>
 			<filename>tinypayment.php</filename>
 		</files>
-		<languages folder="admin/language">
+		<languages folder="language/admin">
         		<language tag="en-GB">en-GB/en-GB.com_tinypayment.ini</language>
                 <language tag="en-GB">en-GB/en-GB.com_tinypayment.sys.ini</language>
+        		<language tag="fa-IR">fa-IR/fa-IR.com_tinypayment.ini</language>
+                <language tag="fa-IR">fa-IR/fa-IR.com_tinypayment.sys.ini</language>
 		</languages>
 	</administration>
 

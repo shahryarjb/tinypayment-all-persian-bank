@@ -48,6 +48,8 @@
  * @version 1.0.001
  * @author Nicola Asuni - info@tecnick.com
  */
+defined('_JEXEC') or die;
+
 class TCPDF_FILTERS {
 
 	/**

@@ -42,7 +42,7 @@
 * @author Nicola Asuni
 * @version 1.0.008
 */
-
+defined('_JEXEC') or die;
 // custom definitions
 if (!defined('DATAMATRIXDEFS')) {
 

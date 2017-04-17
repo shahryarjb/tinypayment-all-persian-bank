@@ -45,6 +45,8 @@
  * @version 1.0.004
  * @author Nicola Asuni - info@tecnick.com
  */
+defined('_JEXEC') or die;
+
 class TCPDF_COLORS {
 
 	/**

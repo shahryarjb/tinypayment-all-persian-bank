@@ -9,24 +9,45 @@
 defined('_JEXEC') or die;
 jimport('joomla.application.component.model');
 JModelLegacy::addIncludePath(JPATH_SITE.'/components/com_tinypayment/models'); 
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'otherport.php'; 
+require_once JPATH_SITE .'/components/com_tinypayment/helpers/otherport.php'; 
+require_once JPATH_SITE .'/components/com_tinypayment/helpers/inputcheck.php'; 
+//---------------------------------------- config 
+require_once JPATH_SITE .'/administrator/components/com_tinypayment/helpers/config.php'; 
+//----------------------------------------
 
 class zarinpal {
 	static function send ($uniqId,$price,$port,$payDescription,$payerEmail,$payerMobile) {
+		//------------------------ config
+		$mconfig = new config();
+		$loadMainConfig = $mconfig->loadMainSettings();
+		$port_zarinpal = $mconfig->loadPortSettings(3);
+		//------------------------
 		$app	= JFactory::getApplication();
-		if ($app->getParams()->get('zarinpalmerchantid') != null){
+		if ($port_zarinpal->terminal_code != null){
 			$Model = JModelLegacy::getInstance( 'Form', 'TinyPaymentModel' );
 			$session = JFactory::getSession();
-			$MerchantID = $app->getParams()->get('zarinpalmerchantid');
-			$Amount = ($price/10); 
-			$Description = $payDescription; 
-			$Email = $payerEmail; 
-			$Mobile = $payerMobile;
-			$CallbackURL = JURI::root().'index.php?option=com_tinypayment&view=form&layout=callback&task=form.callback'; 
+			if($port_zarinpal->test_mode){
+				$MerchantID = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'; 
+			}
+			else {
+				$MerchantID = $port_zarinpal->terminal_code;
+			}
 			
+			$Amount = ($price/10); //Amount will be based on Toman - Required
+			$Description = $payDescription; // Required
+			$Email = $payerEmail; // Optional
+			$Mobile = $payerMobile; // Optional
+			$CallbackURL = JURI::root().'index.php?option=com_tinypayment&view=form&layout=callback&task=form.callback'; // Required
+			
+			//set session of unid id 
 			try {
-				$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); 	
+				if ($port_zarinpal->test_mode != null && $port_zarinpal->test_mode == 1){
+					$client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); // for local
+				}
+				else {
+					$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); 	
+				}
+
 				$result = $client->PaymentRequest(
 					[
 					'MerchantID' => $MerchantID,
@@ -38,42 +59,64 @@ class zarinpal {
 					]
 				);
 				
-				$resultStatus = abs($result->Status); 
+				//Redirect to URL You can do it also by creating a form
+				$resultStatus = abs($result->Status); // tabdli add manfi be mosbat
 				if ($resultStatus == 100) {
-				
-				Header('Location: https://www.zarinpal.com/pg/StartPay/'.$result->Authority); 
-	
+					if ($port_zarinpal->test_mode != null && $port_zarinpal->test_mode == 1){
+						Header('Location: https://sandbox.zarinpal.com/pg/StartPay/'.$result->Authority); // for local/
+					}
+					else {
+						Header('Location: https://www.zarinpal.com/pg/StartPay/'.$result->Authority); 
+					}
 				} else {
 					echo'ERR: '.$resultStatus;
 				}
 			}
 			catch(\SoapFault $e) {
 				$app	= JFactory::getApplication();
-				$link = JRoute::_('index.php?option=com_tinypayment&view=form',false);
+				$link = JRoute::_('index.php?option=com_tinypayment&view=form&layout=default',false);
 				$app->redirect($link, '<h2>خطا غیر منتظره رخ داده است</h2>', $msgType='Error'); 
 			}
 		}
 		else {
 			$app	= JFactory::getApplication();
-			$link = JRoute::_('index.php?option=com_tinypayment&view=form',false);
+			$link = JRoute::_('index.php?option=com_tinypayment&view=form&layout=default',false);
 			$app->redirect($link, '<h2>یک یا چند پیکربندی از افزونه بدرستی انجام نشده است.</h2>', $msgType='Error'); 
 		}
 	}
 	
 	static function verify ($uniqId,$portId,$price) {
-		$app	= JFactory::getApplication();
-		if ($app->getParams()->get('zarinpalmerchantid') != null){
+		$app = JFactory::getApplication(); 
+		$jinput = $app->input;
+		//------------------------ config
+		$mconfig = new config();
+		$loadMainConfig = $mconfig->loadMainSettings();
+		$port_zarinpal = $mconfig->loadPortSettings(3);
+		//------------------------
+		$Authority = $jinput->get->get('Authority', '0', 'INT');
+		$status = $jinput->get->get('Status', '', 'STRING');
+
+		if ($port_zarinpal->terminal_code != null){
 			$Model = JModelLegacy::getInstance( 'Form', 'TinyPaymentModel' );
 			$session = JFactory::getSession();
 			
 			if (other::checkBot($uniqId)){	
-				$MerchantID = $app->getParams()->get('zarinpalmerchantid');
-				$Amount = $price/10; 
-				$Authority = $_GET['Authority'];
+				if($port_zarinpal->test_mode){
+					$MerchantID = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'; 
+				}
+				else {
+					$MerchantID = $port_zarinpal->terminal_code;
+				}
+				$Amount = $price/10; //Amount will be based on Toman
 
-				if ($_GET['Status'] == 'OK') {
+				if ($status == 'OK') {
 					try {
-						$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); 
+						if ($port_zarinpal->test_mode != null && $port_zarinpal->test_mode == 1){
+							$client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); // for local
+						}
+						else {
+							$client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']); 
+						}
 
 						$result = $client->PaymentVerification(
 						[
@@ -82,33 +125,33 @@ class zarinpal {
 						'Amount' => $Amount,
 						]
 						);
-						$resultStatus = abs($result->Status); 
+						$resultStatus = abs($result->Status); // tabdli add manfi be mosbat
 						if ($resultStatus == 100) {
-							$msg= $Model->getTinyMsg($portId,$resultStatus); 
-							$Model->updateLogs($uniqId,$resultStatus,$msg);
-							$Model->updateTransactions($uniqId,$Authority,$result->RefID,''); 
+							$msg= $Model->getTinyMsg($portId,$resultStatus); //get message from DB
+							$Model->updateLogs($uniqId,$resultStatus,$msg); // update transcation logs
+							$Model->updateTransactions($uniqId,$Authority,$result->RefID,''); // update transcation
 							$link = JRoute::_('index.php?option=com_tinypayment&view=form&layout=callback',false);
 							$app->redirect($link, '<h2>'.$msg.'</h2>', $msgType='Message'); 
 						} 
 						else {
 							$msg= $Model->getTinyMsg($portId,$resultStatus);
-							$Model->updateLogs($uniqId,$resultStatus,$msg); 
-							$Model->updateTransactions($uniqId,$Authority,$result->RefID,''); 
-							$link = JRoute::_('index.php?option=com_tinypayment&view=form',false);
+							$Model->updateLogs($uniqId,$resultStatus,$msg); // update transcation logs
+							$Model->updateTransactions($uniqId,$Authority,$result->RefID,''); // update transcation
+							$link = JRoute::_('index.php?option=com_tinypayment&view=form&layout=default',false);
 							$app->redirect($link, '<h2>'.$msg.'</h2>', $msgType='Error'); 
 						}
 					}
 					catch(\SoapFault $e) {
 						$app	= JFactory::getApplication();
-						$link = JRoute::_('index.php?option=com_tinypayment&view=form',false);
+						$link = JRoute::_('index.php?option=com_tinypayment&view=form&layout=default',false);
 						$app->redirect($link, '<h2>خطا غیر منتظره رخ داده است</h2>', $msgType='Error'); 
 					}
 				} 
 				else {
 					$msg= $Model->getTinyMsg($portId,intval(17));
-					$Model->updateLogs($uniqId,intval(17),$msg); 
-					$Model->updateTransactions($uniqId,$Authority,0000000000,'');
-					$link = JRoute::_('index.php?option=com_tinypayment&view=form',false);
+					$Model->updateLogs($uniqId,intval(17),$msg); // update transcation logs
+					$Model->updateTransactions($uniqId,$Authority,0000000000,''); // update transcation
+					$link = JRoute::_('index.php?option=com_tinypayment&view=form&layout=default',false);
 					$app->redirect($link, '<h2>'.$msg.'</h2>', $msgType='Error'); 
 				}
 			}
@@ -118,7 +161,7 @@ class zarinpal {
 		}
 		else {
 			$app	= JFactory::getApplication();
-			$link = JRoute::_('index.php?option=com_tinypayment&view=form',false);
+			$link = JRoute::_('index.php?option=com_tinypayment&view=form&layout=default',false);
 			$app->redirect($link, '<h2>یک یا چند پیکربندی از افزونه بدرستی انجام نشده است.</h2>', $msgType='Error'); 
 		}
 	}

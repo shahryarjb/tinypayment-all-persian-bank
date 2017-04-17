@@ -7,21 +7,34 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 defined('_JEXEC') or die('Restricted access');
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'otherport.php'; 
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'inputcheck.php';
+require_once JPATH_SITE .'/components/com_tinypayment/helpers/otherport.php';
+if (!class_exists ('checkHack')) {
+	require_once JPATH_SITE .'/components/com_tinypayment/helpers/inputcheck.php';
+}
+//---------------------------------------- config 
+require_once JPATH_SITE .'/administrator/components/com_tinypayment/helpers/config.php'; 
+$mconfig = new config();
+$loadMainConfig = $mconfig->loadMainSettings();
+//----------------------------------------
+
+//--------------------------------------- for token
 if (!JSession::checkToken( 'post' )) {
 	$newData = checkHack::joinStrip('tokenInvalid');
 	other::reqForm($newData,'token');
 }
-JHtml::_('behavior.formvalidator'); 
+//--------------------------------------- for token
+JHtml::_('behavior.formvalidator'); // for client side check
 JHtml::stylesheet(JURI::root().'components/com_tinypayment/ui/dist/css/customadmin.css');
 JHtml::stylesheet(JURI::root().'components/com_tinypayment/ui/dist/css/custom.css');
 JHtml::stylesheet('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
+
+//============================================== recaptcha new
 $file = 'https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=' . JFactory::getLanguage()->getTag();
 JHtml::_('script', $file);
+//============================================== recaptcha new
 $model = $this->getModel('form');
-$app	= JFactory::getApplication(); 
+$app	= JFactory::getApplication();
+//------------------------------------------------------- get data 
 $jinput = JFactory::getApplication()->input;
 $input = $jinput->getArray(array(
 	'jform' => array(
@@ -33,6 +46,7 @@ $input = $jinput->getArray(array(
 		'pay_price' => 'INT'
 		)
 	));
+//-------------------------------- variable
 $name = $input['jform']['payer_name'];
 $mobile = $input['jform']['payer_mobile'];
 $email = $input['jform']['payer_email'];
@@ -44,6 +58,8 @@ $nPort = $model->portName($port);
 $remoteip  = other::getRealIpAddr();
 $payerIp = $remoteip;
 $createTime = time();
+//------------------------------------------------------- get data
+//------------------------------------------------------- check data
 
 if (
 	checkHack::checkString($title) && 
@@ -60,7 +76,7 @@ if (
 <form class="form-validate" action=""  method="post" id="userinfo" name="form">
 
 
-<div class="callout callout-info">
+<div class="callout callout-info"> <!-- inja bayad params config bekhore -->
 کاربر محترم پیش فاکتور هیچ تضمین قانونی ندارد فقط برای اطلاع رسانی نمایش گزاشته می شود
 </div>
 <h3>پیش فاکتور کاربر <? echo htmlspecialchars($name, ENT_COMPAT, 'UTF-8'); ?></h3>
@@ -112,7 +128,7 @@ if (
 					<input id="payer_ip" name="payer_ip" type="text" class="required validate-username" value="<? echo htmlspecialchars($payerIp, ENT_COMPAT, 'UTF-8'); ?>" readonly>
 					<input type="hidden" name="task" value="form.submit" />
 				</div>
-				<?php if ($app->getParams()->get('recapstatus') != null && $app->getParams()->get('recapstatus') == 1) {?>
+				<?php if ($mconfig->loadMainSettings()->captcha != null && $mconfig->loadMainSettings()->captcha == 1) {?>
 					<div id="html_element" style="clear: both;"></div><br>
 				<?php }?>
 				<input id="pay" type="submit" value="پرداخت" class="validate btn btn-small btn-success"><br>
@@ -120,12 +136,12 @@ if (
 
 </form>
 <script type="text/javascript">
-<?php if ($app->getParams()->get('recapstatus') != null && $app->getParams()->get('recapstatus') == 1) {?>
+<?php if ($mconfig->loadMainSettings()->captcha != null && $mconfig->loadMainSettings()->captcha == 1) {?>
 	jQuery("#pay").hide(); 
 <?php }?>
 var onloadCallback = function() {
 grecaptcha.render('html_element', {
-  'sitekey' : '<?php echo $app->getParams()->get('pubrecapcod'); ?>',
+  'sitekey' : '<?php echo $mconfig->loadMainSettings()->public_key; ?>',
   'callback' : test
 });
 };

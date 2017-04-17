@@ -32,7 +32,7 @@
 //   Static methods used by the TCPDF class.
 //
 //============================================================+
-
+defined('_JEXEC') or die;
 /**
  * @file
  * This is a PHP class that contains static methods for the TCPDF class.<br>
@@ -1914,7 +1914,6 @@ class TCPDF_STATIC {
 		}
 		//
 		$alt = array_unique($alt);
-		//var_dump($alt);exit;//DEBUG
 		foreach ($alt as $path) {
 			$ret = @file_get_contents($path);
 			if ($ret !== false) {

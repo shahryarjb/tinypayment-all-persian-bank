@@ -32,7 +32,7 @@
 //   Static image methods used by the TCPDF class.
 //
 //============================================================+
-
+defined('_JEXEC') or die;
 /**
  * @file
  * This is a PHP class that contains static image methods for the TCPDF class.<br>

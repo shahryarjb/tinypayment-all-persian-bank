@@ -22,20 +22,28 @@ $user = JFactory::getUser();
 
 $all_data = $model->loadData('all');
 $ok_data = $model->loadData('ok');
-$tedad_kol = count($all_data); 
-$tedad_mofagh = count($ok_data); 
-$tedad_na_mofagh = count($all_data) - count($ok_data);
+$tedad_kol = count($all_data); // tedad kol dar kol sal
+$tedad_mofagh = count($ok_data); // tedad mofagh dar kol sal
+$tedad_na_mofagh = count($all_data) - count($ok_data); // tedad cancel shode dar kol sal
+
+//price_ok bar asase har mah
 $mabaleghe_mofagh = $model->claculate('price','ok');
+//count_all bar asase har mah
 $tedad_kol_mah = $model->claculate('count','all');
+//count_ok
 $tedad_mofagh_mah = $model->claculate('count','ok');
 
 if ($tedad_mofagh_mah != null ) {
+	//value_all
 	$tedad_trakonesh_hame_mah = array_values($tedad_kol_mah);
+	//value_ok
 	$jame_tedad_mofagh_mah = array_values($tedad_mofagh_mah);
 }
 if ($mabaleghe_mofagh != null ) {
+	//value_price
 	$mabaleghe_mofagh_mah = array_values($mabaleghe_mofagh);
-	$jame_mablagh_kol = array_sum($mabaleghe_mofagh); 
+	//allpricestatic
+	$jame_mablagh_kol = array_sum($mabaleghe_mofagh); // mablaghe kol
 }
 else {
 	$jame_mablagh_mofagh_ma = '0';
@@ -145,17 +153,22 @@ else {
       foreach (array_keys($mabaleghe_mofagh) as $mon){
         $month[] = $model->covertMonth($mon);
       }
+      //allpricemonth
       $all_month_ok = implode(",",$month);
+      //allprice
       $all_month_price = implode(",",$mabaleghe_mofagh_mah);    
     }
-
+    //-------------------------------------------------------
+    //-------------------------------------------------------
     if ($tedad_mofagh_mah != null) {
       foreach (array_keys($tedad_mofagh_mah) as $mon){
         $month_all[] = $model->covertMonth($mon);
       }
-      
+      //allstorepaymentmonth
       $name_mah_mofagh = implode(",",$month_all);
+      //allstorepaymentvalue
       $tedad_mah_mofagh =implode(",",$tedad_mofagh_mah);
+      //allpaymentokyvalue
       $tedad_trakonesh_ok = implode(",",array_values($tedad_mofagh_mah));
      
        foreach($tedad_kol_mah as $key => $all){

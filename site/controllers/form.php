@@ -8,10 +8,16 @@
  */
 // No direct access.
 defined('_JEXEC') or die;
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'tinypayment.php'; 
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'inputcheck.php'; 
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'otherport.php'; 
+require_once JPATH_SITE .'/components/com_tinypayment/helpers/tinypayment.php'; 
+
+if (!class_exists ('checkHack')) { 
+	require_once JPATH_SITE .'/components/com_tinypayment/helpers/inputcheck.php'; 
+}
+require_once JPATH_SITE .'/components/com_tinypayment/helpers/otherport.php'; 
+
+//---------------------------------------- config 
+require_once JPATH_SITE .'/administrator/components/com_tinypayment/helpers/config.php'; 
+//----------------------------------------
 
 class TinyPaymentControllerForm extends JControllerForm
 {
@@ -23,9 +29,17 @@ class TinyPaymentControllerForm extends JControllerForm
  
 	public function submit()
 	{
+		// Check for request forgeries.
 		JSession::checkToken( 'post' ) or die( 'Invalid Token' );
+		
+		//------------------------- config 
+		$mconfig = new config();
+		$loadMainConfig = $mconfig->loadMainSettings();
+		//------------------------- 
+		// Initialise variables.
 		$app	= JFactory::getApplication();
 		$model	= $this->getModel('form');
+		
 		$jinput = JFactory::getApplication()->input;
 		$input = $jinput->getArray(array(
 							'jform' => array(
@@ -39,10 +53,11 @@ class TinyPaymentControllerForm extends JControllerForm
 								'pay_port' => 'INT'
 								)
 						));
-
+		
+		//========================================================= captcha
 		$remoteip  = other::getRealIpAddr();
-		if ($app->getParams()->get('recapstatus') != null && $app->getParams()->get('recapstatus') == 1) {
-			$privatekey = $app->getParams()->get('prerecapcod');
+		if ($loadMainConfig->captcha != null && $loadMainConfig->captcha == 1) {
+			$privatekey = $loadMainConfig->private_key;
 			$response = $jinput->get('g-recaptcha-response','','string');
 			require_once JPATH_SITE.'/plugins/captcha/recaptcha/recaptchalib.php';
 
@@ -56,7 +71,8 @@ class TinyPaymentControllerForm extends JControllerForm
 				}
 			}
 		}
-
+		//========================================================= captcha		
+		//-------------------------------- variable
 		$payTitle = $input['jform']['pay_title'];
 		$payDescription = $input['jform']['pay_description'];
 		$payerName = $input['jform']['payer_name'];
@@ -64,8 +80,11 @@ class TinyPaymentControllerForm extends JControllerForm
 		$payerEmail = $input['jform']['payer_email'];
 		$payerIp = $input['jform']['payer_ip'];
 		$port = $input['jform']['pay_port'];
+		//---------------
 		$createTime = time();
+		//---------------
 		$price = $input['jform']['pay_price'];
+		//------------- redirect
 		if (
 			checkHack::checkString($payTitle) && 
 			checkHack::checkAlphaNumberic($payDescription) &&  
@@ -86,6 +105,7 @@ class TinyPaymentControllerForm extends JControllerForm
 		}	
 	}
 	
+	
 	public function callback () {
 		$model	= $this->getModel('form');
 		$model->callback2();
@@ -98,7 +118,7 @@ class TinyPaymentControllerForm extends JControllerForm
 		$app	= JFactory::getApplication();
 		$app-> setHeader('Content-Type', 'application/pdf; charset=utf-8', true);
 		$model	= $this->getModel('form');
-		$model->CallPdf($data);
+		$model->CallPdf($data,null,null);
 		$app->close();	
 	}
  

@@ -42,6 +42,7 @@ class TinyPaymentControllerStorePayment extends JControllerForm
 		-> setHeader('Expires', '0', true)
 		-> setHeader('Pragma','no-cache',true);
 
+		// Close the application gracefully.
 		$app->sendHeaders();
 		$app->close();	
 	}

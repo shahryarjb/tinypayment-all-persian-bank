@@ -40,6 +40,7 @@
  * @package com.tecnick.tcpdf
  * @version 1.0.000
  */
+defined('_JEXEC') or die;
 
 if (php_sapi_name() != 'cli') {
   echo 'You need to run this command from console.';

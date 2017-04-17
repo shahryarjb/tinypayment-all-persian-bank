@@ -8,39 +8,65 @@
  */
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
-
+ 
+// Include dependancy of the main model form
 jimport('joomla.application.component.modelform');
+// import Joomla modelitem library
+//jimport('joomla.application.component.modelitem');
+// Include dependancy of the dispatcher
 jimport('joomla.event.dispatcher');
+ 
+//Import filesystem libraries. Perhaps not necessary, but does not hurt
+jimport('joomla.filesystem.file'); // for file upload // تست امنیت
+/**
+ * UpdHelloWorld Model
+ */
 require_once JPATH_SITE .'/components/com_tinypayment/helpers/jdf.php';
-
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'tinypayment.php'; 
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'mellat.php'; 
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'saman.php'; 
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'zarinpal.php'; 
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'otherport.php'; 
+require_once JPATH_SITE .'/components/com_tinypayment/helpers/tinypayment.php';
+require_once JPATH_SITE .'/components/com_tinypayment/helpers/mellat.php';
+require_once JPATH_SITE .'/components/com_tinypayment/helpers/saman.php';
+require_once JPATH_SITE .'/components/com_tinypayment/helpers/zarinpal.php';
+require_once JPATH_SITE .'/components/com_tinypayment/helpers/otherport.php';
 jimport('joomla.user.helper');
-
 
 class TinyPaymentModelForm extends JModelForm
 {
+	/**
+	 * @var object item
+	 */
 	protected $item;
 
+	/**
+	 * Get the data for a new qualification
+	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-        $app = JFactory::getApplication('site');
+ 
+        		$app = JFactory::getApplication('site');
+ 
+        		// Get the form.
 		$form = $this->loadForm('com_tinypayment.form', 'form', array('control' => 'jform', 'load_data' => true));
 		if (empty($form)) {
 			return false;
 		}
 		return $form;
+ 
 	}
 	
+	/**
+	 * Method to get the script that have to be included on the form
+	 *
+	 * @return string	Script files
+	 */
 	public function getScript() 
 	{
 		return '/components/com_tinypayment/models/forms/form.js';
 	}
 
+	/**
+	 * Get the message
+	 * @return object The message to be displayed to the user
+	 */
 	function &getItem()
 	{
  
@@ -48,13 +74,21 @@ class TinyPaymentModelForm extends JModelForm
 		{
 			$cache = JFactory::getCache('com_tinypayment', '');
 			$id = $this->getState('tinypayment.id');
-			$this->_item =  $cache->get($id); 
+			$this->_item =  $cache->get($id); // اینجا نیاز به امنیت نداره ؟
 			if ($this->_item === false) {
  
 			}
 		}
 		return $this->_item;
+ 
 	}
+ 
+	// public function makeFaktor($inputs) {
+	// 	JSession::checkToken( 'post' ) or die( 'Invalid Token' );
+	// 	echo '<pre dir="ltr">';
+	// 	print_r($inputs);
+	// 	echo '</pre>';
+	// }
 	
 	public function portName ($id) {
 		switch(intval($id)) {
@@ -71,7 +105,9 @@ class TinyPaymentModelForm extends JModelForm
 		}
 		return $out;	
 	}
-	
+	//==========================================================
+	//======================== start store info
+	//==========================================================
 	public function storePayment ($payTitle,$payDescription,$payerName,$payerMobile,$payerEmail,$payerIp,$createTime,$uniqId,$cryptUID,$salt) {
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -143,38 +179,75 @@ class TinyPaymentModelForm extends JModelForm
 		return $result;
 	}
 	
+
+	//==========================================================
+	//======================== end store info
+	//==========================================================
 	public function sendpay ($payTitle,$payDescription,$payerName,$payerMobile,$payerEmail,$payerIp,$createTime,$price,$port) {
 		$app	= JFactory::getApplication();
 		$session = JFactory::getSession();
 		if ($price >= 1000) {
 			$remoteip  = other::getRealIpAddr();
-			$uniqId = ip2long($remoteip).rand(ip2long($remoteip),date('now')); 
+			$uniqId = ip2long($remoteip).rand(ip2long($remoteip),date('now')); // generate uniq id 
 			$salt = JUserHelper::genRandomPassword(32);
 			$cryptUID = JUserHelper::getCryptedPassword($uniqId, $salt);
 			$session->set('uniqId', $cryptUID);
 			
-			$this->storePayment($payTitle,$payDescription,$payerName,$payerMobile,$payerEmail,$payerIp,$createTime,$uniqId,$cryptUID,$salt); 
-			$paymentId = $this->getPaymentId ($payerMobile,$payerEmail,$uniqId); 
-			$this->storeTransactions($price,$port,$paymentId,$uniqId); 
-			$transaction_id = $this->getTranscationId ($port,$uniqId); 
-			$this->storeLogs ($transaction_id,$uniqId); 
-
+			//-------------------------------
+			
+			$this->storePayment($payTitle,$payDescription,$payerName,$payerMobile,$payerEmail,$payerIp,$createTime,$uniqId,$cryptUID,$salt); // store information of payer
+			$paymentId = $this->getPaymentId ($payerMobile,$payerEmail,$uniqId); // get payment id
+			$this->storeTransactions($price,$port,$paymentId,$uniqId); // store information of transcation
+			$transaction_id = $this->getTranscationId ($port,$uniqId); // get transcation id
+			$this->storeLogs ($transaction_id,$uniqId); // store information of log
+			
+			//-------------------------------
 			switch($port) {
-				case 1:mellat::send($uniqId,$price,$port);break;
-				case 2: other::test($uniqId);break;
-				case 3: zarinpal::send($uniqId,$price,$port,$payDescription,$payerEmail,$payerMobile);break;
-				case 4:other::test($uniqId);break;
-				case 5:other::test($uniqId);break;
-				case 6:other::test($uniqId);break;
-				case 7:other::test($uniqId);break;
-				case 8:other::test($uniqId);break;	
-				case 9:saman::send($uniqId,$price,$port);break;
-				default:other::test($uniqId);break;
+				//----------------------------------------------------------------------------------- mellat
+				case 1:
+					mellat::send($uniqId,$price,$port);
+				break;
+				//----------------------------------------------------------------------------------- meli
+				case 2: 
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- zaripal
+				case 3: 
+					zarinpal::send($uniqId,$price,$port,$payDescription,$payerEmail,$payerMobile);
+				break;
+				//----------------------------------------------------------------------------------- payline
+				case 4:
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- jahan pay
+				case 5:
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- parsian
+				case 6:
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- pasargad
+				case 7:
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- saderat
+				case 8:
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- saman
+				case 9:
+					saman::send($uniqId,$price,$port);
+				break;
+				
+				default:
+					other::test($uniqId);
+				break;
 			}
 		}
 		else {
 			if ($session->isActive('uniqId')) { $session->clear('uniqId'); }
-			$msg = $this->getTinyMsg(0,1000); 
+			$msg = $this->getTinyMsg(0,1000); //get message from DB	
 			$link = JRoute::_('index.php?option=com_tinypayment&view=form',false);
 			$app->redirect($link, '<h2>'.$msg.'</h2>', $msgType='Error'); 
 		}
@@ -183,7 +256,9 @@ class TinyPaymentModelForm extends JModelForm
 	public function callback2 () {
 		$app	= JFactory::getApplication();
 		$session = JFactory::getSession();
+		//$session->fork();
 		$cryptUID = $session->get('uniqId');
+		
 		$getData = $this::getPaymentInfo($cryptUID)[0];
 		$salt = $getData->salt;
 		$uniqId = $getData->uniq;
@@ -194,16 +269,46 @@ class TinyPaymentModelForm extends JModelForm
 			$portId = $getData->port_id;
 			
 			switch($portId) {
-				case 1:mellat::verify($uniqId,$portId);break;
-				case 2: other::test($uniqId);break;
-				case 3: zarinpal::verify($uniqId,$portId,$price);break;
-				case 4:other::test($uniqId);break;
-				case 5:other::test($uniqId);break;
-				case 6:other::test($uniqId);break;
-				case 7:other::test($uniqId);break;
-				case 8:other::test($uniqId);break;
-				case 9:saman::verify($cryptUID,$portId);break;
-				default:other::test($uniqId);break;
+				//----------------------------------------------------------------------------------- mellat
+				case 1:
+					mellat::verify($uniqId,$portId);
+				break;
+				//----------------------------------------------------------------------------------- meli
+				case 2: 
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- zaripal
+				case 3: 
+					zarinpal::verify($uniqId,$portId,$price);
+				break;
+				//----------------------------------------------------------------------------------- payline
+				case 4:
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- jahan pay
+				case 5:
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- parsian
+				case 6:
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- pasargad
+				case 7:
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- saderat
+				case 8:
+					other::test($uniqId);
+				break;
+				//----------------------------------------------------------------------------------- saman
+				case 9:
+					saman::verify($cryptUID,$portId);
+				break;
+				
+				default:
+					other::test($uniqId);
+				break;
 			}	
 		}
 		else {
@@ -270,23 +375,27 @@ class TinyPaymentModelForm extends JModelForm
 		return $result;
 	}
 	
-	public function getPaymentInfo($uniqId) {
+	public function getPaymentInfo($uniqId,$id) {
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select('tp.pay_title,tp.pay_description,tp.payer_name,tp.payer_mobile,tp.payer_email,tp.salt,tp.uniq,tp.cryptuid,
+		$query->select('tp.id,tp.pay_title,tp.pay_description,tp.payer_name,tp.payer_mobile,tp.payer_email,tp.salt,tp.uniq,tp.cryptuid,
 						tt.port_id,tt.price,tt.tracking_code,
 						tsl.result_message,tsl.log_date')
 			->from($db->qn('#__tinypayment_paymentinfo') . ' as tp')
-			->leftJoin($db->qn('#__tinypayment_transactions') . ' as tt ON tt.payment_id = tp.id')
-			->leftJoin($db->qn('#__tinypayment_status_log') . ' as tsl ON tsl.transaction_id = tt.id');
-		$query->where($db->qn('tp.cryptuid') . ' = ' . $db->q($uniqId));
+			->leftJoin($db->qn('#__tinypayment_transactions') . ' as tt ON '. $db->qn('tt.payment_id'). ' = ' . $db->qn('tp.id'))
+			->leftJoin($db->qn('#__tinypayment_status_log') . ' as tsl ON '. $db->qn('tsl.transaction_id').' =  ' . $db->qn('tt.id'));
+		if (isset($uniqId))
+			$query->where($db->qn('tp.cryptuid') . ' = ' . $db->q($uniqId));
+		else
+			$query->where($db->qn('tp.id') . ' = ' . $db->q($id));
 		$db->setQuery((string)$query); 
 		$result = $db->loadObjectlist();
 		return $result;
 	}
- 
-	public function preData ($id) {
-			$paymentInfo = $this->getPaymentInfo($id)[0];
+	//==================================================================================== pdf
+	//prepare data 
+	public function preData ($uniqId,$id) {
+			$paymentInfo = $this->getPaymentInfo($uniqId,$id)[0];
 			$newPaymentInfo[] = preg_replace('/\s+/', '_', $paymentInfo->payer_name);
 			$newPaymentInfo[] = $paymentInfo->payer_mobile;
 			$newPaymentInfo[] = $paymentInfo->payer_email;
@@ -297,64 +406,103 @@ class TinyPaymentModelForm extends JModelForm
 			$newPaymentInfo[] = round($paymentInfo->price,2);
 			$newPaymentInfo[] = $paymentInfo->tracking_code;
 			$newPaymentInfo[] = preg_replace('/\s+/', '_',$paymentInfo->result_message);
+			$newPaymentInfo[] = $paymentInfo->id;
 			
 		return array($newPaymentInfo);
 	}
+	//------------------
 	
-	public function CallPdf($data) {
-		$info = $this->preData($data);
+	public function CallPdf($data,$id,$stat) {
+		$user = JFactory::getUser();
+		$info = $this->preData($data,$id);
 		$this->pdf($info);
-		$filePath = JPATH_ROOT . '/media/com_tinypayment/images/pdf/invoice-'.$info[0][8].'.pdf';
-		$this->processDownload($filePath,'invoice-'. $info[0][8].'.pdf',true);
-	}
+		$filePath = JPATH_ROOT . '/media/com_tinypayment/images/pdf/invoice-'.$info[0][10].'-'.$user->id.'.pdf';
 
-	public static function pdf ($data) {
+		if ($stat == null)
+			$this->processDownload($filePath,'invoice-'.$info[0][10].'-'.$user->id.'.pdf',true);
+	}
+	/**
+	 * Generate invoice PDF
+	 * @param array $cid
+	 */
+	public static function pdf ($info) {
 		$mainframe = JFactory::getApplication();
 		$sitename = $mainframe->getCfg("sitename");
 		require_once JPATH_COMPONENT_SITE . "/tcpdf/tcpdf.php";
+
 		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+		// set document information
 		$pdf->SetCreator(PDF_CREATOR);
 		$pdf->SetAuthor($sitename);
 		$pdf->SetTitle('فاکتور');
 		$pdf->SetSubject('فاکتور');
 		$pdf->SetKeywords('فاکتور');
+
+		// set default header data
 		$pdf->SetHeaderData('tinypayment_invoice_logo.png', 30, JURI::root() , ' ', array(0,64,255), array(0,64,128));
+		//$pdf->setFooterData(array(0,64,0), array(0,64,128));
+
+		// set header and footer fonts
 		$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
 		$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+		// set default monospaced font
 		$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+		// set margins
 		$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+		// set auto page breaks
 		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+		// set image scale factor
 		$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+		// set some language-dependent strings (optional)
 		if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
 		require_once(dirname(__FILE__).'/lang/eng.php');
 		$pdf->setLanguageArray($l);
 		}
 
+		// ---------------------------------------------------------
+
+		// set font
 		$pdf->SetFont('freeserif', '', 12, '', true);
+
+		// add a page
 		$pdf->AddPage();
+
 		$pdf->Write(0, 'فاکتور پرداخت', '', 0, 'L', true, 0, false, false, 0);
 		$pdf->Ln();
+
+		//-----------------------------------------------------------
 		$out = '<table style="border-color: #000000;" border="1"> 
 		<tbody> 
-				<tr> <td>'.str_replace("_"," ",htmlspecialchars($data[0][0], ENT_COMPAT, 'UTF-8')).'</td> <td>نام پرداخت کننده</td></tr> 
-				<tr> <td>'.str_replace("_"," ",htmlspecialchars($data[0][1], ENT_COMPAT, 'UTF-8')).'</td> <td>شماره همراه پرداخت کننده</td></tr> 
-				<tr> <td>'.str_replace("_"," ",htmlspecialchars($data[0][2], ENT_COMPAT, 'UTF-8')).'</td> <td>ایمیل پرداخت کننده</td></tr> 
-				<tr> <td>'.str_replace("_"," ",htmlspecialchars($data[0][3], ENT_COMPAT, 'UTF-8')).'</td> <td>عنوان پرداخت کننده</td></tr> 
-				<tr> <td>'.str_replace("_"," ",htmlspecialchars($data[0][4], ENT_COMPAT, 'UTF-8')).'</td> <td>توضیحات</td></tr> 
-				<tr> <td>'.str_replace("_"," ",htmlspecialchars($data[0][5], ENT_COMPAT, 'UTF-8')).'</td> <td>تاریخ پرداخت</td></tr> 
-				<tr> <td>'.str_replace("_"," ",htmlspecialchars($data[0][6], ENT_COMPAT, 'UTF-8')).'</td> <td>درگاه</td></tr> 
-				<tr> <td>'.str_replace("_"," ",htmlspecialchars($data[0][7], ENT_COMPAT, 'UTF-8')).'</td> <td>مبلغ</td></tr> 
-				<tr> <td>'.str_replace("_"," ",htmlspecialchars($data[0][8], ENT_COMPAT, 'UTF-8')).'</td> <td>کدپیگیری</td></tr> 
-				<tr> <td>'.str_replace("_"," ",htmlspecialchars($data[0][9], ENT_COMPAT, 'UTF-8')).'</td> <td>وضعیت پرداخت</td></tr> 
+				<tr> <td>'.str_replace("_"," ",htmlspecialchars($info[0][0], ENT_COMPAT, 'UTF-8')).'</td> <td>نام پرداخت کننده</td></tr> 
+				<tr> <td>'.str_replace("_"," ",htmlspecialchars($info[0][1], ENT_COMPAT, 'UTF-8')).'</td> <td>شماره همراه پرداخت کننده</td></tr> 
+				<tr> <td>'.str_replace("_"," ",htmlspecialchars($info[0][2], ENT_COMPAT, 'UTF-8')).'</td> <td>ایمیل پرداخت کننده</td></tr> 
+				<tr> <td>'.str_replace("_"," ",htmlspecialchars($info[0][3], ENT_COMPAT, 'UTF-8')).'</td> <td>عنوان پرداخت کننده</td></tr> 
+				<tr> <td>'.str_replace("_"," ",htmlspecialchars($info[0][4], ENT_COMPAT, 'UTF-8')).'</td> <td>توضیحات</td></tr> 
+				<tr> <td>'.str_replace("_"," ",htmlspecialchars($info[0][5], ENT_COMPAT, 'UTF-8')).'</td> <td>تاریخ پرداخت</td></tr> 
+				<tr> <td>'.str_replace("_"," ",htmlspecialchars($info[0][6], ENT_COMPAT, 'UTF-8')).'</td> <td>درگاه</td></tr> 
+				<tr> <td>'.str_replace("_"," ",htmlspecialchars($info[0][7], ENT_COMPAT, 'UTF-8')).'</td> <td>مبلغ</td></tr> 
+				<tr> <td>'.str_replace("_"," ",htmlspecialchars($info[0][8], ENT_COMPAT, 'UTF-8')).'</td> <td>کدپیگیری</td></tr> 
+				<tr> <td>'.str_replace("_"," ",htmlspecialchars($info[0][9], ENT_COMPAT, 'UTF-8')).'</td> <td>وضعیت پرداخت</td></tr> 
 				
 				
 		</tbody> </table>';
 		$out .= '<p style="text-align: right;"> </p>
 			<p dir="rtl" style="text-align: right;">کامپوننت آسان پرداخت <a href="https://trangell.com/fa/">ترانگل</a></p>';
 		$pdf->writeHTML($out, true, false, false, false, '');
-		$filePath = JPATH_ROOT . '/media/com_tinypayment/images/pdf/invoice-'.$data[0][8].'.pdf';
+		//-----------------------------------------------------------
+
+		// Close and output PDF document
+		// This method has several options, check the source code documentation for more information.
+		$user = JFactory::getUser();
+		$filePath = JPATH_ROOT . '/media/com_tinypayment/images/pdf/invoice-'.$info[0][10].'-'.$user->id.'.pdf';
 		$pdf->Output($filePath, 'F');
 		
 	}
@@ -371,6 +519,7 @@ class TinyPaymentModelForm extends JModelForm
 		}		
 		$ext = JFile::getExt($filename) ;
 		$mime = 'application/pdf';
+		// required for IE, otherwise Content-disposition is ignored
 		if(ini_get('zlib.output_compression'))  {
 			ini_set('zlib.output_compression', 'Off');
 		}
@@ -382,19 +531,26 @@ class TinyPaymentModelForm extends JModelForm
 			. ' filename="' . JFile::getName($filename) . '";' 
 			. ' modification-date="' . $mod_date . '";'
 			. ' size=' . $fsize .';'
-			); 
-	    header("Content-Type: "    . $mime );			
+			); //RFC2183
+	    header("Content-Type: "    . $mime );			// MIME type
 	    header("Content-Length: "  . $fsize);
 	
-	    if( ! ini_get('safe_mode') ) { 
+	    if( ! ini_get('safe_mode') ) { // set_time_limit doesn't work in safe mode
 		    @set_time_limit(0);
 	    }
 	    self::readfile_chunked($filePath);
 	}
 	
+	/**
+	 * 
+	 * Function to read file
+	 * @param string $filename
+	 * @param boolean $retbytes
+	 * @return boolean|number
+	 */
 	public static function readfile_chunked($filename, $retbytes = true)
 	{
-		$chunksize = 1 * (1024 * 1024); 
+		$chunksize = 1 * (1024 * 1024); // how many bytes per chunk
 		$buffer = '';
 		$cnt = 0;
 		$handle = fopen($filename, 'rb');
@@ -416,8 +572,15 @@ class TinyPaymentModelForm extends JModelForm
 		$status = fclose($handle);
 		if ($retbytes && $status)
 		{
-			return $cnt; 
+			return $cnt; // return num. bytes delivered like readfile() does.
 		}
 		return $status;
+	}
+
+	public function sendEmail($data,$id,$stat){
+		$user = JFactory::getUser();
+		// make pdf
+		$this->CallPdf(null,$id,$stat); //create pdf
+		TinyPaymentHelper::sendEmail($id,$user); //send pdf
 	}
 }

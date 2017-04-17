@@ -33,6 +33,12 @@ abstract class TinyPaymentHelper
 		</a>
 		</li>
 		<li class="lisidbars">
+		<a href="index.php?option=com_tinypayment&view=settings">
+		<i class="fa fa-balance-scale" aria-hidden="true"></i>
+		تنظیمات
+		</a>
+		</li>
+		<li class="lisidbars">
 		<a href="index.php?option=com_tinypayment&view=guide">
 		 <i class="fa fa-diamond" aria-hidden="true"></i>
 		راهنما
@@ -47,7 +53,7 @@ abstract class TinyPaymentHelper
 		echo '<div class="span6 cright">
             	تمامی حقوق " <a title="کامپوننت آسان پرداخت جوملا" href="https://trangell.com/fa/blog/90-کامپوننت-آسان-پرداخت-جامع-جوملا" rel="alternate">کامپوننت آسان پرداخت جوملا</a> " متعلق به وبسایت " <a title="گروه برنامه نویسی ترانگل" href="https://trangell.com/fa/" rel="alternate">ترانگل</a> " می باشد. 
           		<code>
-            	نسخه 1.0.0
+            	نسخه 3.0.0
           		</code>
         		</div>';
 	}

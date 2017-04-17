@@ -9,10 +9,19 @@
 defined('_JEXEC') or die('Restricted access');
 $app	= JFactory::getApplication();
 require_once JPATH_SITE .'/components/com_tinypayment/helpers/jdf.php';
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'otherport.php'; 
-require_once JPATH_SITE . DS .'components'.DS.'com_tinypayment'.DS.'helpers'.DS.'inputcheck.php';
-JHtml::_('behavior.formvalidator'); 
+require_once JPATH_SITE .'/components/com_tinypayment/helpers/otherport.php';
+
+
+if (!class_exists ('checkHack')) {
+	require_once JPATH_SITE .'/components/com_tinypayment/helpers/inputcheck.php';
+}
+//---------------------------------------- config 
+require_once JPATH_SITE .'/administrator/components/com_tinypayment/helpers/config.php'; 
+$mconfig = new config();
+$loadMainConfig = $mconfig->loadMainSettings();
+//----------------------------------------
+
+JHtml::_('behavior.formvalidator'); // for client side check
 JHtml::stylesheet(JURI::root().'components/com_tinypayment/ui/dist/css/customadmin.css');
 JHtml::stylesheet(JURI::root().'components/com_tinypayment/ui/dist/css/custom.css');
 JHtml::stylesheet('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css');
@@ -21,15 +30,17 @@ $model = $this->getModel('form');
 $session = JFactory::getSession();
 $cryptUID = $session->get('uniqId');
 if ($cryptUID != null && $cryptUID != '') {
-	$paymentInfo = $model->getPaymentInfo($cryptUID)[0];
+	$paymentInfo = $model->getPaymentInfo($cryptUID,null)[0];
 }
 else {
 	$paymentInfo ='';
 }
 ?>
 <form class="form-validate" action=""  method="post" id="userinfo" name="form">
-				<?php if ($paymentInfo != null ) { ?>
-
+				<?php if ($paymentInfo != null ) { 
+					$model->sendEmail(null,$paymentInfo->id,1);
+				?>
+					
 <h3>فاکتور پرداخت کاربر :  <? echo htmlspecialchars($paymentInfo->payer_name, ENT_COMPAT, 'UTF-8'); ?></h3>
 <div class="row-fluid">
 				<div class="span12">
@@ -82,7 +93,7 @@ else {
                             </table>
   </div>
 </div> 
-						<?php if ($app->getParams()->get('pdfshow') != null && $app->getParams()->get('pdfshow') == 1 ){?>
+						<?php if ($mconfig->loadMainSettings()->show_pdf != null && $mconfig->loadMainSettings()->show_pdf == 1 ){?>
 							<button type="submit" class="btn btn-small"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> خروجی pdf</button>
 						<?php }?>
 						<input type="hidden" name="task" value="form.pdf2" />
@@ -90,7 +101,7 @@ else {
 					<?php }
 					else {
 						$msg = 'فاکتوری صادر نشده است . لطفا فرم زیر را پر کنید';
-						$link = JRoute::_('index.php?option=com_tinypayment&view=form',false);
+						$link = JRoute::_('index.php?option=com_tinypayment&view=form&layout=default',false);
 						$app->redirect($link, '<h2>'.$msg.'</h2>', $msgType='Error'); 
 					}
 				?>

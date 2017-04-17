@@ -47,6 +47,8 @@
  * @version 1.0.027
  * @author Nicola Asuni
  */
+defined('_JEXEC') or die;
+ 
 class TCPDFBarcode {
 
 	/**

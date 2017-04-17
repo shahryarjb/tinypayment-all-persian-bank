@@ -20,29 +20,38 @@ class TinyPaymentViewGuide extends JViewLegacy
 	protected $canDo;
 
 	public function display($tpl = null)	{
+		// Get data from the model
 		$this->items		= $this->get('Items');
 		$this->pagination	= $this->get('Pagination');
 		$this->state		= $this->get('State');
+		
+		// // Get the Data
 		$this->form = $this->get('Form');
 		$this->item = $this->get('Item');
 		$this->script = $this->get('Script');
+
+		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
-			JError::raiseError(500, implode('<br />', $errors));
-
+			JFactory::getApplication()->enqueueMessage(JText::_($errors), 'error');
 			return false;
 		}
 
 		$this->addToolBar();
+
+		// Display the template
 		parent::display($tpl);
+
+
+
 	}
 
 	protected function addToolBar()
 	{
 		$input = JFactory::getApplication()->input;
 		JToolBarHelper::title(JText::_('راهنما'), $this->comName);
-		JToolBarHelper::divider();
-		JToolBarHelper::preferences('com_tinypayment');
+			JToolBarHelper::divider();
+			JToolBarHelper::preferences('com_tinypayment');
 	}
 
 }
