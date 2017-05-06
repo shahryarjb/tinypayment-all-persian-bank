@@ -3,7 +3,7 @@
  * @package     Joomla - > Site and Administrator payment info
  * @subpackage  com_tinypayment
  * @copyright   trangell team => https://trangell.com
- * @copyright   Copyright (C) 20016 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2017 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -53,7 +53,7 @@ abstract class TinyPaymentHelper
 		echo '<div class="span6 cright">
             	تمامی حقوق " <a title="کامپوننت آسان پرداخت جوملا" href="https://trangell.com/fa/blog/90-کامپوننت-آسان-پرداخت-جامع-جوملا" rel="alternate">کامپوننت آسان پرداخت جوملا</a> " متعلق به وبسایت " <a title="گروه برنامه نویسی ترانگل" href="https://trangell.com/fa/" rel="alternate">ترانگل</a> " می باشد. 
           		<code>
-            	نسخه 3.0.0
+            	نسخه 3.0.1
           		</code>
         		</div>';
 	}

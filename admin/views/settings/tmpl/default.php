@@ -3,7 +3,7 @@
  * @package     Joomla - > Site and Administrator payment info
  * @subpackage  com_tinypayment
  * @copyright   trangell team => https://trangell.com
- * @copyright   Copyright (C) 20016 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2017 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -95,11 +95,6 @@ $port_zarinpal = $config->loadPortSettings(3);
                         <input type="radio" name="active9" value="1" <? echo ($port_saman->active) == 1 ? 'checked="checked"' : ''; ?>> بله
                         <input type="radio" name="active9" value="0"  <? echo ($port_saman->active) == 0 ? 'checked="checked"' : ''; ?>> خیر
                         <hr>
-                        <h5>نام کاربری : </h5>
-                        <input name="username9" id="username9" value="<? echo htmlspecialchars($port_saman->username, ENT_COMPAT, 'UTF-8'); ?>" class="required" required="required" aria-required="true" aria-invalid="false" type="text"><br>
-                         <h5>کلمه عبور : </h5>
-
-                         <input name="password9" id="password9" value="<? echo htmlspecialchars($port_saman->password, ENT_COMPAT, 'UTF-8'); ?>" class="required" required="required" aria-required="true" aria-invalid="false" type="text"><br>
                          <h5>شماره ترمینال : </h5>
                       <input name="terminalcode9" id="terminalcode9" value="<? echo htmlspecialchars($port_saman->terminal_code, ENT_COMPAT, 'UTF-8'); ?>" class="required" required="required" aria-required="true" aria-invalid="false" type="text"><br>
             <?php echo JHtml::_('bootstrap.endTab'); ?>

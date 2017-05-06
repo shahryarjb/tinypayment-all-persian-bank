@@ -3,7 +3,7 @@
  * @package     Joomla - > Site and Administrator payment info
  * @subpackage  com_tinypayment
  * @copyright   trangell team => https://trangell.com
- * @copyright   Copyright (C) 20016 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2017 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 defined('_JEXEC') or die;
@@ -23,11 +23,7 @@ class saman {
 		$port_saman = $mconfig->loadPortSettings(9);
 		//------------------------
 		$app	= JFactory::getApplication();
-		if (
-			$port_saman->terminal_code != null && $port_saman->terminal_code != 'terminalcode' && 
-			$port_saman->username != null && $port_saman->username != 'username' &&
-			$port_saman->password !=null && $port_saman->password != 'password'
-			){
+		if ($port_saman->terminal_code != null && $port_saman->terminal_code != 'terminalcode' ){
 			$Model = JModelLegacy::getInstance( 'Form', 'TinyPaymentModel' );
 			$session = JFactory::getSession();
 			$merchantId =$port_saman->terminal_code;
@@ -86,11 +82,7 @@ class saman {
 		$loadMainConfig = $mconfig->loadMainSettings();
 		$port_saman = $mconfig->loadPortSettings(9);
 		//------------------------
-		if (
-			$port_saman->terminal_code != null && $port_saman->terminal_code != 'terminalcode' && 
-			$port_saman->username != null && $port_saman->username != 'username' &&
-			$port_saman->password !=null && $port_saman->password != 'password'
-		){
+		if ($port_saman->terminal_code != null && $port_saman->terminal_code != 'terminalcode'){
 			$Model = JModelLegacy::getInstance( 'Form', 'TinyPaymentModel' );
 			$getData = $Model->getPaymentInfo($cryptId)[0];
 			$uniqId = $getData->uniq;

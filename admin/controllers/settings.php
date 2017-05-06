@@ -3,7 +3,7 @@
  * @package     Joomla - > Site and Administrator payment info
  * @subpackage  com_tinypayment
  * @copyright   trangell team => https://trangell.com
- * @copyright   Copyright (C) 20016 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2017 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 defined('_JEXEC') or die('Restricted access');
@@ -74,14 +74,10 @@ class TinyPaymentControllerSettings extends JControllerForm {
 						// ports value
 		//------------------------------------------
 		$saman_active = $input['jform']['active9'];
-		$saman_user = $input['jform']['username9'];
-		$saman_pass = $input['jform']['password9'];
 		$saman_terminal = $input['jform']['terminalcode9'];
 		$port->saman = array(
 				'bankid' => 9 , 
 				'active' => $saman_active, 
-				'username' =>$saman_user , 
-				'password' =>$saman_pass , 
 				'terminal_code' =>$saman_terminal ,
 				'test_mode' => 0
 			);
@@ -123,8 +119,6 @@ class TinyPaymentControllerSettings extends JControllerForm {
 			checkHack::checkNum($mellat_active) &&
 			checkHack::checkNum($zarinpal_active) &&
 			checkHack::checkNum($zarinpal_test) &&
-			checkHack::checkString($saman_user) && 
-			checkHack::checkString($saman_pass) && 
 			checkHack::checkString($saman_terminal) && 
 			checkHack::checkString($mellat_user) && 
 			checkHack::checkString($mellat_pass) && 
@@ -140,9 +134,18 @@ class TinyPaymentControllerSettings extends JControllerForm {
 				$link = JRoute::_('index.php?option=com_tinypayment&view=Settings', false);
 				$app->redirect($link, '<h2>تنظیمات با موفقیت ذخیره شد</h2>', $msgType='Message'); 	
 			}
-			else {
+			else if($zarinpal_active == 1 && $zarinpal_test == 1) {
 				$link = JRoute::_('index.php?option=com_tinypayment&view=Settings', false);
 				$app->redirect($link, '<h2>درگاه تست و اصلی زرین پال نمی تواند در یک زمان فعال باشد.</h2>', $msgType='Error'); 	
+			}
+			else {
+				$model = $this->getModel('settings');
+				$model->updateMainSettings($data);
+				foreach($port as  $bank){
+					$model->updatePortSettings($bank);
+				}
+				$link = JRoute::_('index.php?option=com_tinypayment&view=Settings', false);
+				$app->redirect($link, '<h2>تنظیمات با موفقیت ذخیره شد</h2>', $msgType='Message'); 
 			}	
 		}
 		else {
